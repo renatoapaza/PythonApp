@@ -26,11 +26,12 @@ pipeline{
             steps{
                 //sh 'echo ${DOCKERHUB_CREDS_PSW}'
                 sh 'echo ${DOCKERHUB_CREDS_PSW} | docker login -u ${DOCKERHUB_CREDS_USR} --password-stdin' 
-                sh 'docker push ${IMAGE_NAME}:${BUILD_NUMBER}'
+                //sh 'docker push ${IMAGE_NAME}:${BUILD_NUMBER}'
+                echo "push a docker Hub"
             }
         }
 
-        /*
+        
         stage("Docker run"){
             steps{
                 input message: 'Continue?'
@@ -42,7 +43,7 @@ pipeline{
                 """
             }
         }
-        */
+        
         
         stage("Update Deployment Manifest") {
             steps {
@@ -50,8 +51,9 @@ pipeline{
                     // Construir el nombre de la imagen con el número de build
                     def newImage = "${IMAGE_NAME}:${BUILD_NUMBER}"
                     // Usar sed para actualizar el archivo de manifiesto
-                    sh "sed -i 's|IMAGE_PLACEHOLDER|${newImage}|' k8s/manifest.yaml"
+                    //sh "sed -i 's|IMAGE_PLACEHOLDER|${newImage}|' k8s/manifest.yaml"
                     sh "cat k8s/manifest.yaml "
+                    echo "git commit y git push "
                 }
             }
         }
@@ -61,7 +63,7 @@ pipeline{
                  //input message: 'Continue?'
                  script {
                      withCredentials([file(credentialsId: 'jenkins_minikube_config', variable: 'KUBECONFIG')]) {
-                         sh 'kubectl apply -f k8s/manifest.yaml'
+                         //sh 'kubectl apply -f k8s/manifest.yaml'
                      }
                  }
              }
