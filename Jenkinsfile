@@ -5,13 +5,34 @@ pipeline{
         IMAGE_NAME = "renatoapaza/python-app"
         DOCKERHUB_CREDS = credentials("jenkins-dockerhub")
         NameContainer = "python-app"
+        ENV = '.venv'
     }
 
     stages{
-        
+        stage('Preparar entorno Python') {
+            steps {
+                sh '''
+                    python3 -m venv $VENV
+                    . $VENV/bin/activate
+                    pip install --upgrade pip
+                    pip install -r requirements.txt
+                '''
+            }
+        }
+        /*
         stage('Run Unit Test') {
             steps {
                 sh 'pip install -r requirements.txt && python3 -m unittest test_app.py'
+            }
+        }
+        */
+
+        stage('Pruebas Unitarias') {
+            steps {
+                sh '''
+                    . $VENV/bin/activate
+                    python3 -m unittest test_app.py
+                '''
             }
         }
         
