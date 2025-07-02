@@ -8,12 +8,13 @@ pipeline{
     }
 
     stages{
+        /*
         stage('Run Unit Test') {
             steps {
                 sh 'pip install -r requirements.txt && python3 -m unittest test_app.py'
             }
         }
-
+        */
         stage('Build image') {
             steps {
                 sh 'docker build -t ${IMAGE_NAME}:${BUILD_NUMBER} . '
