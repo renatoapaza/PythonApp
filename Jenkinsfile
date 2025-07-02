@@ -10,13 +10,13 @@ pipeline{
     stages{
         stage('Run Unit Test') {
             steps {
-                sh 'cd python-app && pip install -r requirements.txt && python3 -m unittest test_app.py'
+                sh 'pip install -r requirements.txt && python3 -m unittest test_app.py'
             }
         }
 
         stage('Build image') {
             steps {
-                sh 'docker build -t ${IMAGE_NAME}:${BUILD_NUMBER} ./python-app'
+                sh 'docker build -t ${IMAGE_NAME}:${BUILD_NUMBER} . '
             }
         }
         
@@ -49,8 +49,8 @@ pipeline{
                     // Construir el nombre de la imagen con el número de build
                     def newImage = "${IMAGE_NAME}:${BUILD_NUMBER}"
                     // Usar sed para actualizar el archivo de manifiesto
-                    sh "sed -i 's|IMAGE_PLACEHOLDER|${newImage}|' python-app/k8s/manifest.yaml"
-                    sh "cat python-app/k8s/manifest.yaml "
+                    sh "sed -i 's|IMAGE_PLACEHOLDER|${newImage}|' k8s/manifest.yaml"
+                    sh "cat k8s/manifest.yaml "
                 }
             }
         }
@@ -60,7 +60,7 @@ pipeline{
                  //input message: 'Continue?'
                  script {
                      withCredentials([file(credentialsId: 'jenkins_minikube_config', variable: 'KUBECONFIG')]) {
-                         sh 'kubectl apply -f python-app/k8s/manifest.yaml'
+                         sh 'kubectl apply -f k8s/manifest.yaml'
                      }
                  }
              }
