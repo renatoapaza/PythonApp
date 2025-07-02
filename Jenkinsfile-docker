@@ -1,0 +1,44 @@
+pipeline{
+    agent any
+
+    environment {
+        IMAGE_NAME = "renatoapaza/python-app"
+        DOCKERHUB_CREDS = credentials("dockerhub")
+        NameContainer = "python-app"
+    }
+
+    stages{
+
+        stage('Copy git repo') {
+            steps {
+                git branch: 'master', credentialsId: 'github', url: 'https://github.com/renatoapaza/mod04-devops.git'
+            }
+        }
+
+        stage('Build image') {
+            steps {
+                sh 'docker build -t ${IMAGE_NAME}:${BUILD_NUMBER} ./python-app'
+            }
+        }
+        stage("Docker push"){
+            steps{
+                //sh 'echo ${DOCKERHUB_CREDS_PSW}'
+                sh 'echo ${DOCKERHUB_CREDS_PSW} | docker login -u ${DOCKERHUB_CREDS_USR} --password-stdin' 
+                sh 'docker push ${IMAGE_NAME}:${BUILD_NUMBER}'
+            }
+        }
+        
+    }
+    
+    post {
+        always {
+            sh 'docker logout'
+        }
+        success{
+            sh " Todo bien."
+        }
+        failure{
+            echo " Ejecucion con errores"
+        }
+    } 
+}

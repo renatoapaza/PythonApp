@@ -1,0 +1,23 @@
+# Instalación
+sudo apt install -y python3-pip
+sudo apt install curl
+
+# Ejecutar la aplicación
+pip install -r requirements.txt
+python3 app.py
+
+
+# Para jenkins
+
+#Ver la configuracion de minikube
+kubectl config view
+
+#Exportar el contexto de minikube
+kubectl config view --merge --flatten > config-minikube
+
+#PAra un solo conexto
+kubectl config view --minify --flatten --context=minikube > mk.yaml
+
+
+#Obtener los contextos
+kubectl config get-contexts

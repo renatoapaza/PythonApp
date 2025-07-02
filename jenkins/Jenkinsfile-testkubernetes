@@ -1,0 +1,26 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Ejecutar Docker') {
+            steps {
+                script {
+                    // Ejecutar comando docker version
+                    sh "docker version"
+                }
+            }
+        }
+        
+        stage('Ejecutar Kubernetes') {
+            steps {
+                script {
+                    // Ejecutar comando kubectl version
+                    //sh "kubectl version"
+                    withCredentials([file(credentialsId: 'minikube_config', variable: 'KUBECONFIG')]) {
+                        sh 'kubectl version'
+                    }
+                }
+            }
+        }
+    }
+}  

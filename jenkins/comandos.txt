@@ -1,0 +1,19 @@
+
+#1. ver la configuracion de minikube
+kubectl config view
+
+#---------------------------------------------------------
+certificate-authority: /home/renato/.minikube/ca.crt
+server: https://192.168.49.2:8443
+#---------------------------------------------------------
+
+# 2.
+cat /home/renato/.minikube/ca.crt | base64 | tr -d '\n' 
+
+# Alternativa 2, utilizar el siguiente comando para obtener el certificado en base64
+cat /home/renato/.minikube/ca.crt | base64 -w 0; echo
+
+
+# 3. obtener el Token creado
+kubectl get secret jenkins-token -n default -o  jsonpath="{.data.token}" | base64 --decode
+

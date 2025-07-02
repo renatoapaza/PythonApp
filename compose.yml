@@ -1,0 +1,6 @@
+services:
+  python-app:
+    image: python-app
+    container_name: python-app
+    ports:
+      - 8082:5000

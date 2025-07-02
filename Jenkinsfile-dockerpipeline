@@ -1,0 +1,58 @@
+ pipeline {   
+    agent any
+    environment {
+        DOCKERHUB_CREDENTIALS= credentials('dockerhub')
+        registry = "renatoapaza/python-app"
+        registryCredential = 'dockerhub'
+        dockerImage = ''
+    }
+    stages {
+       stage('Copy git repo') {
+            steps {
+                git branch: 'master', credentialsId: 'github', url: 'https://github.com/renatoapaza/mod04-devops.git'
+            }
+        }
+
+        stage('Build Docker Image') {            
+            steps{    
+                dir('python-app'){                  
+                    script {
+                        dockerImage = docker.build registry + ":$BUILD_NUMBER"
+                    }
+                    //sh 'docker build -t renatoapaza/webhotelhub:$BUILD_NUMBER .'           
+                    echo 'Build Image Completed'
+                }
+            }
+        }
+        stage('Login to Docker Hub') {          
+          steps{
+        	  //sh 'docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+        	  echo 'Login Completed'
+            }
+        }
+        
+        // Instalar el plugin: Docker Pipeline
+        stage('Push Image to Docker Hub') {                     
+            steps{
+                script {
+                        docker.withRegistry( '', registryCredential ) {
+                        dockerImage.push()
+                        dockerImage.push("latest")
+                    }
+                }
+                echo 'Push Image Completed'  
+            }           
+        }
+        stage('Cleaning up') {
+            steps{
+                sh "docker rmi $registry:$BUILD_NUMBER"
+            }
+        }
+    
+    } //stages 
+    post{
+        always {  
+          sh 'docker logout'           
+        }      
+    }  
+}
