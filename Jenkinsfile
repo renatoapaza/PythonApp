@@ -34,7 +34,7 @@ pipeline{
             }
         }
 
-        
+        /*
         stage("Docker run"){
             steps{
                 input message: 'Continue?'
@@ -46,7 +46,19 @@ pipeline{
                 """
             }
         }
-        
+        */
+        stage("Deploy"){
+            steps{
+                sh """
+                if docker ps -a | grep -q ${env.NameContainer}; then 
+                    docker stop ${env.NameContainer} && docker rm ${env.NameContainer}
+                fi
+                
+                docker run -d --name ${env.NameContainer} -p 3000:5000 ${IMAGE_NAME}:${BUILD_NUMBER}
+                """
+            }
+        }
+
         
         stage("Update Deployment Manifest") {
             steps {
@@ -66,12 +78,11 @@ pipeline{
                  //input message: 'Continue?'
                  script {
                      withCredentials([file(credentialsId: 'jenkins_minikube_config', variable: 'KUBECONFIG')]) {
-                         sh 'kubectl apply -f k8s/manifest.yaml'
+                         //sh 'kubectl apply -f k8s/manifest.yaml'
                      }
                  }
              }
         }
-    
     }
     
     post {
