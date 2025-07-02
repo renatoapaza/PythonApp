@@ -1,6 +1,10 @@
 pipeline{
-    agent any
-
+    //agent any
+    agent {
+        docker {
+            image 'python:3.11'
+        }
+    }
     environment {
         IMAGE_NAME = "renatoapaza/python-app"
         DOCKERHUB_CREDS = credentials("jenkins-dockerhub")
@@ -8,13 +12,13 @@ pipeline{
     }
 
     stages{
-        /*
+        
         stage('Run Unit Test') {
             steps {
                 sh 'pip install -r requirements.txt && python3 -m unittest test_app.py'
             }
         }
-        */
+        
         stage('Build image') {
             steps {
                 sh 'docker build -t ${IMAGE_NAME}:${BUILD_NUMBER} . '
@@ -39,7 +43,7 @@ pipeline{
                 if docker ps -a | grep -q ${env.NameContainer}; then 
                     docker stop ${env.NameContainer} && docker rm ${env.NameContainer}
                 fi
-                docker run -d --name ${env.NameContainer} -p 5000:5000 ${IMAGE_NAME}:${BUILD_NUMBER}
+                docker run -d --name ${env.NameContainer} -p 3000:5000 ${IMAGE_NAME}:${BUILD_NUMBER}
                 """
             }
         }
