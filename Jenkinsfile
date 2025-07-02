@@ -66,7 +66,7 @@ pipeline{
                  //input message: 'Continue?'
                  script {
                      withCredentials([file(credentialsId: 'jenkins_minikube_config', variable: 'KUBECONFIG')]) {
-                         //sh 'kubectl apply -f k8s/manifest.yaml'
+                         sh 'kubectl apply -f k8s/manifest.yaml'
                      }
                  }
              }
