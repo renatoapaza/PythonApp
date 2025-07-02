@@ -1,10 +1,6 @@
 pipeline{
-    //agent any
-    agent {
-        docker {
-            image 'python:3.11'
-        }
-    }
+    agent any
+
     environment {
         IMAGE_NAME = "renatoapaza/python-app"
         DOCKERHUB_CREDS = credentials("jenkins-dockerhub")
